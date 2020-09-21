@@ -4,10 +4,12 @@ import random
 import re
 
 def quote(work):
-    names = glob.glob(work + '/*.txt')
+    names = glob.glob('/home/flak.yar/wb-quote/' + work + '/*.txt')
     quotes = []
 
-    while not quotes:
+    retry = 30
+    while (not quotes) and (retry > 0):
+        retry -= 1
         try:
             with open(random.choice(names), 'r', encoding='utf-8') as f:
                 text = f.read()
@@ -18,6 +20,8 @@ def quote(work):
             continue
 
     q = random.choice(quotes)
+    if len(q.split(' ')) < 3:
+        return quote(work)
     return q
 
 
