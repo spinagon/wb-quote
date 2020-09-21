@@ -1,7 +1,8 @@
 import requests
 import bs4
 import re
-import sys
+import os
+import argparse
 
 works = {
     "worm": "https://parahumans.wordpress.com/2011/06/11/1-1/",
@@ -10,12 +11,21 @@ works = {
     "ward": "https://www.parahumans.net/2017/10/21/glow-worm-0-1/"
     }
 
+
 def quote(s):
     table = str.maketrans('\\/:|', '    ')
     return s.translate(table)
 
-work = sys.argv[-1]
+
+parser = argparse.ArgumentParser()
+parser.add_argument('work')
+args = parser.parse_args()
+
+work = args.work
 url = works[work]
+
+if not os.path.exists(work):
+    os.mkdir(work)
 
 for i in range(1000):
     page = requests.get(url)
@@ -23,7 +33,9 @@ for i in range(1000):
     title = quote(soup.find("title").text)
     print(title.encode('866', 'replace').decode('866'))
     text = soup.select_one(".entry-content").get_text()
-    with open('{}/{:03d} - {}.txt'.format(work, i, title), 'w', encoding='utf8') as f:
+    with open(
+            '{}/{:03d} - {}.txt'.format(work, i, title),
+            'w', encoding='utf8') as f:
         f.write(text)
     next_chapter = soup.find("a", text=re.compile("(?i)Next Chapter"))
     if next_chapter is None:
