@@ -1,10 +1,17 @@
+# coding: utf-8
+
 import argparse
 import glob
 import random
 import re
+import os
+
 
 def quote(work):
-    names = glob.glob('/home/flak.yar/wb-quote/' + work + '/*.txt')
+    basedir = '/home/flak.yar/wb-quote/'
+    if not os.path.exists(basedir):
+        basedir = r'c:/Documents and Settings/hramatograf/Мои документы/py/wb-quote/'
+    names = glob.glob(basedir + work + '/*.txt')
     quotes = []
 
     retry = 30
@@ -19,7 +26,16 @@ def quote(work):
             print(e)
             continue
 
-    q = random.choice(quotes)
+    i = random.choice(range(len(quotes)))
+    # Backtrack to first sentence ending with comma
+    while i > 0 and quotes[i - 1][-2] == ',':
+        i -= 1
+    q = quotes[i]
+    i += 1
+    # Go forward until sentence doesn't end with comma
+    while q[-2] == ',' and i < len(quotes):
+        q += '\n' + quotes[i]
+        i += 1
     if len(q.split(' ')) < 3:
         return quote(work)
     return q
@@ -39,8 +55,9 @@ if __name__ == '__main__':
     q = q.replace('\u201d', '"')
     q = q.replace('\u2019', "'")
     q = q.replace('\u2026', "...")
+    q = q.replace('\u2018', "'")
 
     try:
         print(q)
     except Exception:
-        print(q.encode('866', 'xmlcharrefreplace'))
+        print(q.encode('866', 'xmlcharrefreplace').decode('utf8'))
