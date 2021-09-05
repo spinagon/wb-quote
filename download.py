@@ -19,33 +19,28 @@ def quote(s):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('work')
-parser.add_argument('-start', nargs=2, default=[0, None])
 args = parser.parse_args()
 
 work = args.work
-if args.start[1] is None:
-    url = works[work]
-else:
-    url = args.start[1]
+url = works[work]
 
 if not os.path.exists(work):
     os.mkdir(work)
 
-for i in range(int(args.start[0]), 1000):
+for i in range(1000):
     page = requests.get(url)
     soup = bs4.BeautifulSoup(page.text, 'lxml')
     title = quote(soup.find("title").text)
+    title = title.replace('\n', '').replace('\t', '')
     print(title.encode('866', 'replace').decode('866'))
     text = soup.select_one(".entry-content").get_text()
-    filename = '{}/{:03d} - {}.txt'.format(work, i, title)
-    filename = filename.replace('\n', '')
-    filename = filename.replace('\t', '')
-    filename = filename.replace('\u2013', '-')
     with open(
-            filename,
+            '{}/{:03d} - {}.txt'.format(work, i, title),
             'w', encoding='utf8') as f:
         f.write(text)
     next_chapter = soup.find("a", text=re.compile("(?i)Next Chapter"))
+    if next_chapter is None:
+        next_chapter = soup.find("a", text=re.compile("(?i)ex Chapr"))
     if next_chapter is None:
         break
     url = next_chapter["href"]
