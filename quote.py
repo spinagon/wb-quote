@@ -34,7 +34,7 @@ def quote(work):
     i += 1
     # Go forward until sentence doesn't end with comma
     while q[-2] == ',' and i < len(quotes):
-        q += '<br>' + quotes[i]
+        q += '\n' + quotes[i]
         i += 1
     if len(q.split(' ')) < 3:
         return quote(work)
@@ -56,7 +56,6 @@ if __name__ == '__main__':
     q = q.replace('\u2019', "'")
     q = q.replace('\u2026', "...")
     q = q.replace('\u2018', "'")
-    q = q.replace('<br>', "\n")
 
     try:
         print(q)
