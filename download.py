@@ -1,8 +1,11 @@
-import requests
-import bs4
-import re
-import os
 import argparse
+import bs4
+import json
+import os
+import re
+import requests
+
+from pathlib import Path
 
 works = {
     "worm": "https://parahumans.wordpress.com/2011/06/11/1-1/",
@@ -31,6 +34,11 @@ else:
 if not os.path.exists(work):
     os.mkdir(work)
 
+def punctuation_to_ascii(text):
+    table = json.loads(Path(r"symbolTable.json").read_text(encoding='utf-8'))
+    table = {int(key): value for key, value in table.items()}
+    return text.translate(table).replace('\xa0', ' ') # nbsp
+
 for i in range(int(args.start[0]), 1000):
     page = requests.get(url)
     soup = bs4.BeautifulSoup(page.text, 'lxml')
@@ -38,6 +46,7 @@ for i in range(int(args.start[0]), 1000):
     title = title.replace('\n', '').replace('\t', '')
     print(title.encode('866', 'replace').decode('866'))
     text = soup.select_one(".entry-content").get_text()
+    text = punctuation_to_ascii(text)
     filename = '{}/{:03d} - {}.txt'.format(work, i, title)
     filename = filename.replace('\n', '')
     filename = filename.replace('\t', '')
