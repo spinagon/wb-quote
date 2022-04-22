@@ -11,7 +11,7 @@ def pre_process(text):
 
 
 def get_stop_words(path):
-    with open(path, encoding='utf-8') as f:
+    with open(path, encoding="utf-8") as f:
         stopwords = f.readlines()
         stop_set = set(m.strip() for m in stopwords)
         return frozenset(stop_set)
@@ -19,18 +19,19 @@ def get_stop_words(path):
 
 stopwords = get_stop_words(
     r"C:\!Drv\WinPython-32bit-3.4.4.2Qt5\python-3.4.4"
-    r"\Lib\site-packages\wordcloud\stopwords")
+    r"\Lib\site-packages\wordcloud\stopwords"
+)
 
-with open(sys.argv[-2], 'rb') as f:
+with open(sys.argv[-2], "rb") as f:
     data = f.read()
-    text = pre_process(data.decode('utf-8', 'replace'))
+    text = pre_process(data.decode("utf-8", "replace"))
 
 n_docs = int(sys.argv[-1])
 docs = []
 start = 0
 for i in range(n_docs):
-    end = start + len(text)//n_docs
-    end = end + re.search(r'\s|$', text[end:]).span()[0]
+    end = start + len(text) // n_docs
+    end = end + re.search(r"\s|$", text[end:]).span()[0]
     docs.append(text[start:end])
     start = end
 
@@ -67,11 +68,11 @@ def kwords(doc):
 
 
 a = [
-    sorted(list(kwords(doc).items()), key=lambda x: x[1], reverse=True)
-    for doc in docs]
+    sorted(list(kwords(doc).items()), key=lambda x: x[1], reverse=True) for doc in docs
+]
 print(a[0])
 names = ["{:03d}".format(i) for i in range(len(a))]
 d = pd.DataFrame(
-    [[y[0] for y in x] for x in a],
-    index=[os.path.basename(name) for name in names])
-d.to_csv('keywords.csv')
+    [[y[0] for y in x] for x in a], index=[os.path.basename(name) for name in names]
+)
+d.to_csv("keywords.csv")
