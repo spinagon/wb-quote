@@ -34,7 +34,7 @@ def quote(work):
     i += 1
     # Go forward until sentence doesn't end with comma
     while q[-2] == "," and i < len(quotes):
-        q += "\n" + quotes[i]
+        q += "<br>" + quotes[i]
         i += 1
     if len(q.split(" ")) < 3:
         return quote(work)
