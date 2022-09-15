@@ -12,6 +12,7 @@ works = {
     "pale": "https://palewebserial.wordpress.com/2020/05/05/blood-run-cold-0-0/",
     "pact": "https://pactwebserial.wordpress.com/2013/12/17/bonds-1-1/",
     "ward": "https://www.parahumans.net/2017/10/21/glow-worm-0-1/",
+    "twig": "https://twigserial.wordpress.com/category/story/arc-1-taking-root/1-01/"
 }
 
 
@@ -58,6 +59,10 @@ for i in range(int(args.start[0]), 1000):
     next_chapter = soup.find("a", text=re.compile("(?i)Next Chapter"))
     if next_chapter is None:
         next_chapter = soup.find("a", text=re.compile("(?i)ex Chapr"))
+    if next_chapter is None:
+        next_chapter = soup.find("a", rel="next")
+    if next_chapter is None:
+        next_chapter = soup.find("a", text=re.compile("(?i)Next"))
     if next_chapter is None:
         break
     url = next_chapter["href"]

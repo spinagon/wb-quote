@@ -22,6 +22,8 @@ def quote(work):
                 text = f.read()
 
             quotes = re.findall("“.*?”", text)
+            if not quotes:
+                quotes = re.findall('".*?"', text)
         except Exception as e:
             print(e)
             continue
