@@ -11,7 +11,7 @@ works = {
     "worm": "https://parahumans.wordpress.com/2011/06/11/1-1/",
     "pale": "https://palewebserial.wordpress.com/2020/05/05/blood-run-cold-0-0/",
     "pact": "https://pactwebserial.wordpress.com/2013/12/17/bonds-1-1/",
-    "ward": "https://www.parahumans.net/2017/10/21/glow-worm-0-1/",
+    "ward": "https://parahumans.net/2017/10/21/glow-worm-0-1/",
     "twig": "https://twigserial.wordpress.com/category/story/arc-1-taking-root/1-01/"
 }
 
