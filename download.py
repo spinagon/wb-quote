@@ -1,18 +1,19 @@
 import argparse
-import bs4
 import json
 import os
 import re
-import requests
-
+import time
 from pathlib import Path
+
+import bs4
+import requests
 
 works = {
     "worm": "https://parahumans.wordpress.com/2011/06/11/1-1/",
     "pale": "https://palewebserial.wordpress.com/2020/05/05/blood-run-cold-0-0/",
     "pact": "https://pactwebserial.wordpress.com/2013/12/17/bonds-1-1/",
     "ward": "https://parahumans.net/2017/10/21/glow-worm-0-1/",
-    "twig": "https://twigserial.wordpress.com/category/story/arc-1-taking-root/1-01/"
+    "twig": "https://twigserial.wordpress.com/category/story/arc-1-taking-root/1-01/",
 }
 
 
@@ -43,7 +44,13 @@ def punctuation_to_ascii(text):
 
 
 for i in range(int(args.start[0]), 1000):
-    page = requests.get(url)
+    for j in range(3):
+        try:
+            time.sleep(0.2)
+            page = requests.get(url)
+            break
+        except Exception:
+            continue
     soup = bs4.BeautifulSoup(page.text, "lxml")
     title = quote(soup.find("title").text)
     title = title.replace("\n", "").replace("\t", "")

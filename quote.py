@@ -2,9 +2,9 @@
 
 import argparse
 import glob
+import os
 import random
 import re
-import os
 
 
 def quote(work):
