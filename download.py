@@ -12,7 +12,7 @@ works = {
     "worm": "https://parahumans.wordpress.com/2011/06/11/1-1/",
     "pale": "https://palewebserial.wordpress.com/2020/05/05/blood-run-cold-0-0/",
     "pact": "https://pactwebserial.wordpress.com/2013/12/17/bonds-1-1/",
-    "ward": "https://parahumans.net/2017/10/21/glow-worm-0-1/",
+    "ward": "https://www.parahumans.net/2017/10/21/glow-worm-0-1/",
     "twig": "https://twigserial.wordpress.com/category/story/arc-1-taking-root/1-01/",
 }
 
@@ -33,6 +33,8 @@ if args.start[1] is None:
 else:
     url = args.start[1]
 
+base_url = re.match("http.*//[^/]+", url).group(0)
+
 if not os.path.exists(work):
     os.mkdir(work)
 
@@ -48,13 +50,20 @@ for i in range(int(args.start[0]), 1000):
         try:
             time.sleep(0.2)
             page = requests.get(url)
+            soup = bs4.BeautifulSoup(page.text, "lxml")
+            title = quote(soup.find("title").text)
+            title = title.replace("\n", "").replace("\t", "")
+            if title.startswith("Redirecting"):
+                url = soup.find("a")["href"]
+                continue
             break
-        except Exception:
+        except Exception as e:
+            raise e
+            print(repr(e))
             continue
-    soup = bs4.BeautifulSoup(page.text, "lxml")
-    title = quote(soup.find("title").text)
-    title = title.replace("\n", "").replace("\t", "")
+
     print(title.encode("866", "replace").decode("866"))
+    print(url)
     text = soup.select_one(".entry-content").get_text()
     text = punctuation_to_ascii(text)
     filename = "{}/{:03d} - {}.txt".format(work, i, title)
@@ -63,13 +72,15 @@ for i in range(int(args.start[0]), 1000):
     filename = filename.replace("\u2013", "-")
     with open(filename, "w", encoding="utf8") as f:
         f.write(text)
-    next_chapter = soup.find("a", text=re.compile("(?i)Next Chapter"))
+    next_chapter = soup.find("a", string=re.compile("(?i)Next Chapter"))
     if next_chapter is None:
-        next_chapter = soup.find("a", text=re.compile("(?i)ex Chapr"))
+        next_chapter = soup.find("a", string=re.compile("(?i)ex Chapr"))
     if next_chapter is None:
         next_chapter = soup.find("a", rel="next")
     if next_chapter is None:
-        next_chapter = soup.find("a", text=re.compile("(?i)Next"))
+        next_chapter = soup.find("a", string=re.compile("(?i)Next"))
     if next_chapter is None:
         break
     url = next_chapter["href"]
+    if url[0] == "/":
+        url = base_url + url
