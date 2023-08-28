@@ -40,6 +40,7 @@ if not os.path.exists(work):
 
 
 def punctuation_to_ascii(text):
+    return text
     table = json.loads(Path(r"symbolTable.json").read_text(encoding="utf-8"))
     table = {int(key): value for key, value in table.items()}
     return text.translate(table).replace("\xa0", " ")  # nbsp
@@ -50,6 +51,7 @@ for i in range(int(args.start[0]), 1000):
         try:
             time.sleep(0.2)
             page = requests.get(url)
+            page.encoding = "utf-8"
             soup = bs4.BeautifulSoup(page.text, "lxml")
             title = quote(soup.find("title").text)
             title = title.replace("\n", "").replace("\t", "")
