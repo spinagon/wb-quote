@@ -18,7 +18,8 @@ def quote(work):
     while (not quotes) and (retry > 0):
         retry -= 1
         try:
-            with open(random.choice(names), "r", encoding="utf-8") as f:
+            name = random.choice(names)
+            with open(name, "r", encoding="utf-8") as f:
                 text = f.read()
 
             quotes = re.findall("“.*?”", text)
@@ -40,6 +41,11 @@ def quote(work):
         i += 1
     if len(q.split(" ")) < 3:
         return quote(work)
+    match = re.search(r"(\d{3}\s-\s)(.*)\s+(\w+)\.txt", name)
+    work = match.group(3)
+    chapter = match.group(2)
+    attribution = f"{work} - {chapter}"
+    q += "<br>" + attribution
     return q
 
 
