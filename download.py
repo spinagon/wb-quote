@@ -1,3 +1,14 @@
+# /// script
+# name = "Wildbow Scraper"
+# version = "0.1.0"
+# description = "A simple script to scrape web serial chapters using 'Next Chapter' links."
+# dependencies = [
+#     "requests",
+#     "beautifulsoup4",
+#     "lxml",
+# ]
+# requires-python = ">=3.8"
+# ///
 import argparse
 import json
 import os
@@ -14,6 +25,8 @@ works = {
     "pact": "https://pactwebserial.wordpress.com/2013/12/17/bonds-1-1/",
     "ward": "https://www.parahumans.net/2017/10/21/glow-worm-0-1/",
     "twig": "https://twigserial.wordpress.com/category/story/arc-1-taking-root/1-01/",
+    "claw": "https://clawwebserial.blog/2024/03/09/the-point-1-1/",
+    "seek": "https://seekwebserial.wordpress.com/2024/10/18/0-1-0-hack/",
 }
 
 
@@ -47,10 +60,10 @@ def punctuation_to_ascii(text):
 
 
 for i in range(int(args.start[0]), 1000):
-    for j in range(3):
+    for j in range(5):
         try:
             time.sleep(0.2)
-            page = requests.get(url)
+            page = requests.get(url, timeout=10)
             page.encoding = "utf-8"
             soup = bs4.BeautifulSoup(page.text, "lxml")
             title = quote(soup.find("title").text)
@@ -60,20 +73,30 @@ for i in range(int(args.start[0]), 1000):
                 continue
             break
         except Exception as e:
-            raise e
             print(repr(e))
             continue
 
     print(title.encode("866", "replace").decode("866"))
     print(url)
     text = soup.select_one(".entry-content").get_text()
+    text_html = str(soup.select_one("article"))
     text = punctuation_to_ascii(text)
+    text_html = punctuation_to_ascii(text_html)
+
+    filename = "{}/{:03d} - {}.html".format(work, i, title)
+    filename = filename.replace("\n", "")
+    filename = filename.replace("\t", "")
+    filename = filename.replace("\u2013", "-")
+    with open(filename, "w", encoding="utf8") as f:
+        f.write(text_html)
+
     filename = "{}/{:03d} - {}.txt".format(work, i, title)
     filename = filename.replace("\n", "")
     filename = filename.replace("\t", "")
     filename = filename.replace("\u2013", "-")
     with open(filename, "w", encoding="utf8") as f:
         f.write(text)
+
     next_chapter = soup.find("a", string=re.compile("(?i)Next Chapter"))
     if next_chapter is None:
         next_chapter = soup.find("a", string=re.compile("(?i)ex Chapr"))
