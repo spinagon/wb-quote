@@ -38,8 +38,14 @@ def extract(work):
             if coalesced_quotes[-1]["quote"][-2] == ",":
                 coalesced_quotes[-1]["quote"] += f"<br>{q}"
             else:
-                coalesced_quotes[-1]["quote"] += f"<br>{source}"
-                coalesced_quotes.append({"chapter": chapter, "quote": q})
+                if (
+                    len(coalesced_quotes[-1]["quote"]) >= 16
+                    or len(coalesced_quotes) == 1
+                ):
+                    coalesced_quotes[-1]["quote"] += f"<br>{source}"
+                    coalesced_quotes.append({"chapter": chapter, "quote": q})
+                else:
+                    del coalesced_quotes[-1]
 
     with open(f"{work}_quotes.json", "w") as f:
         json.dump(coalesced_quotes, f, indent=2)
