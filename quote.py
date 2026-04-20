@@ -1,17 +1,19 @@
 # coding: utf-8
 
 import argparse
-import os
+from pathlib import Path
 import random
 import json
 
 
 def quote(work):
-    basedir = "/home/flak.yar/wb-quote/"
-    if not os.path.exists(basedir):
-        basedir = r"c:/Documents and Settings/hramatograf/Мои документы/py/wb-quote/"
+    basedir = Path("/home/flak.yar/wb-quote/")
+    if not basedir.exists():
+        basedir = Path(
+            r"c:/Documents and Settings/hramatograf/Мои документы/py/wb-quote/"
+        )
 
-    with open(os.path.join(basedir, f"{work}_quotes.json"), "r") as f:
+    with open(basedir / f"{work}_quotes.json", "r") as f:
         quotes = json.load(f)
 
     q = random.choice(quotes)
