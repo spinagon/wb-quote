@@ -1,52 +1,21 @@
 # coding: utf-8
 
 import argparse
-import glob
 import os
 import random
-import re
+import json
 
 
 def quote(work):
     basedir = "/home/flak.yar/wb-quote/"
     if not os.path.exists(basedir):
         basedir = r"c:/Documents and Settings/hramatograf/Мои документы/py/wb-quote/"
-    names = glob.glob(basedir + work + "/*.txt")
-    quotes = []
 
-    retry = 30
-    while (not quotes) and (retry > 0):
-        retry -= 1
-        try:
-            name = random.choice(names)
-            with open(name, "r", encoding="utf-8") as f:
-                text = f.read()
+    with open(f"{work}_quotes.json", "r") as f:
+        quotes = json.load(f)
 
-            quotes = re.findall("“.*?”", text)
-            if not quotes:
-                quotes = re.findall('".*?"', text)
-        except Exception as e:
-            print(e)
-            continue
-
-    i = random.choice(range(len(quotes)))
-    # Backtrack to first sentence ending with comma
-    while i > 0 and quotes[i - 1][-2] == ",":
-        i -= 1
-    q = quotes[i]
-    i += 1
-    # Go forward until sentence doesn't end with comma
-    while q[-2] == "," and i < len(quotes):
-        q += "<br>" + quotes[i]
-        i += 1
-    if len(q.split(" ")) < 3:
-        return quote(work)
-    match = re.search(r"(\d{3}\s-\s)(.*)\s+(\w+)\.txt", name)
-    work = match.group(3)
-    chapter = match.group(2)
-    attribution = f"{work} - {chapter}"
-    q += "<br>" + attribution
-    return q
+    q = random.choice(quotes)
+    return q["quote"]
 
 
 if __name__ == "__main__":
