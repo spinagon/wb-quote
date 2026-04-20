@@ -11,7 +11,7 @@ def quote(work):
     if not os.path.exists(basedir):
         basedir = r"c:/Documents and Settings/hramatograf/Мои документы/py/wb-quote/"
 
-    with open(f"{work}_quotes.json", "r") as f:
+    with open(os.path.join(basedir, f"{work}_quotes.json"), "r") as f:
         quotes = json.load(f)
 
     q = random.choice(quotes)
